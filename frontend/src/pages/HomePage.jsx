@@ -24,36 +24,29 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
 
   // Enhanced color combinations for different themes
   const themeColors = {
-    light: {
-      primary: 'bg-blue-500',
-      secondary: 'bg-blue-100',
-      accent: 'bg-blue-200',
-      text: 'text-gray-800',
-      highlight: 'bg-yellow-200',
-      card: 'bg-white',
-      hover: 'hover:bg-blue-50'
-    },
-    dark: {
-      primary: 'bg-blue-600',
-      secondary: 'bg-blue-900',
-      accent: 'bg-blue-800',
-      text: 'text-gray-100',
-      highlight: 'bg-yellow-800',
-      card: 'bg-gray-800',
-      hover: 'hover:bg-blue-900'
-    },
-    sunset: {
+    autumn: {
       primary: 'bg-orange-500',
       secondary: 'bg-orange-100',
       accent: 'bg-orange-200',
-      text: 'text-gray-800',
+      text: 'text-base-content',
       highlight: 'bg-yellow-200',
       card: 'bg-white',
-      hover: 'hover:bg-orange-50'
+      hover: 'hover:bg-orange-50',
+      border: 'border-base-300'
+    },
+    forest: {
+      primary: 'bg-green-600',
+      secondary: 'bg-green-900',
+      accent: 'bg-green-800',
+      text: 'text-base-content',
+      highlight: 'bg-yellow-800',
+      card: 'bg-gray-800',
+      hover: 'hover:bg-green-900',
+      border: 'border-white/20'
     }
   };
 
-  const currentColors = themeColors[currentTheme || 'light'];
+  const currentColors = themeColors[currentTheme || 'autumn'];
 
   // Fetch notes from the database
   useEffect(() => {
@@ -86,7 +79,7 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
     const parts = text.split(new RegExp(`(${query})`, 'gi'));
     return parts.map((part, i) => 
       part.toLowerCase() === query.toLowerCase() 
-        ? <span key={i} className="bg-yellow-200 dark:bg-yellow-800">{part}</span> 
+        ? <span key={i} className={currentTheme === 'forest' ? 'bg-yellow-800' : 'bg-yellow-200'}>{part}</span> 
         : part
     );
   };
@@ -222,9 +215,8 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
             <Plus className="w-6 h-6 text-base-content" />
           </label>
           <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-52">
-            <li><button onClick={() => onThemeChange('sunset')}>Sunset</button></li>
-            <li><button onClick={() => onThemeChange('light')}>Light</button></li>
-            <li><button onClick={() => onThemeChange('dark')}>Dark</button></li>
+            <li><button onClick={() => onThemeChange('autumn')}>Autumn</button></li>
+            <li><button onClick={() => onThemeChange('forest')}>Forest</button></li>
           </ul>
         </div>
       </header>
@@ -261,7 +253,7 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
         {/* Sidebar: Quick Tag Filtering and Daily Motivation - Now appears above on small screens */}
         <div className="lg:col-span-1 space-y-6 order-first lg:order-last">
           {/* Quick Tag Filtering Section */}
-          <div className="card bg-base-100 shadow-md rounded-xl">
+          <div className={`card bg-base-100 shadow-md rounded-xl border ${currentColors.border}`}>
             <div className="card-body p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-base-content flex items-center space-x-2">
@@ -298,7 +290,7 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
           </div>
 
           {/* Daily Motivation Section */}
-          <div className="card bg-base-100 shadow-md rounded-xl">
+          <div className={`card bg-base-100 shadow-md rounded-xl border ${currentColors.border}`}>
             <div className="card-body p-6">
               <h2 className="text-lg font-semibold text-base-content flex items-center space-x-2 mb-4">
                 <Sparkles className="w-5 h-5" />
@@ -332,12 +324,12 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
                     filteredPinnedNotes.map(note => (
                       <Link to={`/note/${note._id}`} key={note._id}>
                         <div
-                          className={`relative group card shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] rounded-lg ${currentColors.hover}`}
+                          className={`relative group card shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] rounded-lg border ${currentColors.border} ${currentColors.hover}`}
                           style={{ backgroundColor: note.color }}
                         >
                           <div className="card-body p-4">
                             <div className="flex justify-between items-start">
-                              <h3 className="card-title text-lg font-bold">
+                              <h3 className={`card-title text-lg font-bold ${currentTheme === 'forest' ? 'text-black' : ''}`}>
                                 {highlightText(note.title, searchQuery)}
                               </h3>
                               <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -346,7 +338,7 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
                                     e.preventDefault();
                                     handlePinToggle(note._id, !note.isPinned);
                                   }}
-                                  className="text-sm flex items-center space-x-1"
+                                  className={`text-sm flex items-center space-x-1 ${currentTheme === 'forest' ? 'text-black' : ''}`}
                                 >
                                   <Pin className="w-4 h-4" />
                                   <span>{note.isPinned ? 'unpin' : 'pin'}</span>
@@ -356,17 +348,15 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
                                     e.preventDefault();
                                     handleArchive(note._id, true);
                                   }}
-                                  className="text-sm flex items-center space-x-1"
+                                  className={`text-sm flex items-center space-x-1 ${currentTheme === 'forest' ? 'text-black' : ''}`}
                                 >
                                   <Archive className="w-4 h-4" />
                                   <span>archive</span>
                                 </button>
                               </div>
                             </div>
-                            <div className="text-sm text-base-content/80">
-                              {note.content.split('\n').map((line, index) => (
-                                <p key={index}>{highlightText(line, searchQuery)}</p>
-                              ))}
+                            <div className="text-sm text-black/80 whitespace-pre-wrap">
+                              {note.content}
                             </div>
                             <div className="flex justify-between items-center mt-2">
                               <div className="space-x-1">
@@ -374,16 +364,24 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
                                   {note.tags.map(tag => (
                                     <div 
                                       key={tag} 
-                                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${currentColors.secondary} backdrop-blur-sm border border-base-300/50 hover:${currentColors.accent} transition-all duration-200 cursor-pointer group`}
+                                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                        currentTheme === 'forest' 
+                                          ? 'bg-black/10 border border-black/20 hover:bg-black/20' 
+                                          : `${currentColors.secondary} backdrop-blur-sm border border-base-300/50 hover:${currentColors.accent}`
+                                      } transition-all duration-200 cursor-pointer group`}
                                     >
-                                      <span className="text-primary/80 group-hover:text-primary">
+                                      <span className={`${
+                                        currentTheme === 'forest' 
+                                          ? 'text-black/80' 
+                                          : 'text-primary/80 group-hover:text-primary'
+                                      }`}>
                                         #{highlightText(tag, searchQuery)}
                                       </span>
                                     </div>
                                   ))}
                                 </div>
                               </div>
-                              <span className="text-xs text-base-content/50">© {note.createdAt.toLocaleDateString()}</span>
+                              <span className={`text-xs ${currentTheme === 'forest' ? 'text-black/50' : 'text-base-content/50'}`}>© {note.createdAt.toLocaleDateString()}</span>
                             </div>
                           </div>
                         </div>
@@ -412,12 +410,12 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
                     filteredAllNotes.map(note => (
                       <Link to={`/note/${note._id}`} key={note._id}>
                         <div
-                          className={`relative group card shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] rounded-lg ${currentColors.hover}`}
+                          className={`relative group card shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] rounded-lg border ${currentColors.border} ${currentColors.hover}`}
                           style={{ backgroundColor: note.color }}
                         >
                           <div className="card-body p-4">
                             <div className="flex justify-between items-start">
-                              <h3 className="card-title text-lg font-bold">
+                              <h3 className={`card-title text-lg font-bold ${currentTheme === 'forest' ? 'text-black' : ''}`}>
                                 {highlightText(note.title, searchQuery)}
                               </h3>
                               <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -426,7 +424,7 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
                                     e.preventDefault();
                                     handlePinToggle(note._id, !note.isPinned);
                                   }}
-                                  className="text-sm flex items-center space-x-1"
+                                  className={`text-sm flex items-center space-x-1 ${currentTheme === 'forest' ? 'text-black' : ''}`}
                                 >
                                   <Pin className="w-4 h-4" />
                                   <span>{note.isPinned ? 'unpin' : 'pin'}</span>
@@ -436,17 +434,15 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
                                     e.preventDefault();
                                     handleArchive(note._id, true);
                                   }}
-                                  className="text-sm flex items-center space-x-1"
+                                  className={`text-sm flex items-center space-x-1 ${currentTheme === 'forest' ? 'text-black' : ''}`}
                                 >
                                   <Archive className="w-4 h-4" />
                                   <span>archive</span>
                                 </button>
                               </div>
                             </div>
-                            <div className="text-sm text-base-content/80">
-                              {note.content.split('\n').map((line, index) => (
-                                <p key={index}>{highlightText(line, searchQuery)}</p>
-                              ))}
+                            <div className="text-sm text-black/80 whitespace-pre-wrap">
+                              {note.content}
                             </div>
                             <div className="flex justify-between items-center mt-2">
                               <div className="space-x-1">
@@ -454,16 +450,24 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
                                   {note.tags.map(tag => (
                                     <div 
                                       key={tag} 
-                                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${currentColors.secondary} backdrop-blur-sm border border-base-300/50 hover:${currentColors.accent} transition-all duration-200 cursor-pointer group`}
+                                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                        currentTheme === 'forest' 
+                                          ? 'bg-black/10 border border-black/20 hover:bg-black/20' 
+                                          : `${currentColors.secondary} backdrop-blur-sm border border-base-300/50 hover:${currentColors.accent}`
+                                      } transition-all duration-200 cursor-pointer group`}
                                     >
-                                      <span className="text-primary/80 group-hover:text-primary">
+                                      <span className={`${
+                                        currentTheme === 'forest' 
+                                          ? 'text-black/80' 
+                                          : 'text-primary/80 group-hover:text-primary'
+                                      }`}>
                                         #{highlightText(tag, searchQuery)}
                                       </span>
                                     </div>
                                   ))}
                                 </div>
                               </div>
-                              <span className="text-xs text-base-content/50">© {note.createdAt.toLocaleDateString()}</span>
+                              <span className={`text-xs ${currentTheme === 'forest' ? 'text-black/50' : 'text-base-content/50'}`}>© {note.createdAt.toLocaleDateString()}</span>
                             </div>
                           </div>
                         </div>
@@ -496,12 +500,12 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
                   filteredArchivedNotes.map(note => (
                     <Link to={`/note/${note._id}`} key={note._id}>
                       <div
-                        className={`relative group card shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] rounded-lg ${currentColors.hover}`}
+                        className={`relative group card shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] rounded-lg border ${currentColors.border} ${currentColors.hover}`}
                         style={{ backgroundColor: note.color }}
                       >
                         <div className="card-body p-4">
                           <div className="flex justify-between items-start">
-                            <h3 className="card-title text-lg font-bold">
+                            <h3 className={`card-title text-lg font-bold ${currentTheme === 'forest' ? 'text-black' : ''}`}>
                               {highlightText(note.title, searchQuery)}
                             </h3>
                             <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -510,17 +514,15 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
                                   e.preventDefault();
                                   handleArchive(note._id, false);
                                 }}
-                                className="text-sm flex items-center space-x-1"
+                                className={`text-sm flex items-center space-x-1 ${currentTheme === 'forest' ? 'text-black' : ''}`}
                               >
                                 <Archive className="w-4 h-4" />
                                 <span>unarchive</span>
                               </button>
                             </div>
                           </div>
-                          <div className="text-sm text-base-content/80">
-                            {note.content.split('\n').map((line, index) => (
-                              <p key={index}>{highlightText(line, searchQuery)}</p>
-                            ))}
+                          <div className="text-sm text-black/80 whitespace-pre-wrap">
+                            {note.content}
                           </div>
                           <div className="flex justify-between items-center mt-2">
                             <div className="space-x-1">
@@ -528,16 +530,24 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
                                 {note.tags.map(tag => (
                                   <div 
                                     key={tag} 
-                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${currentColors.secondary} backdrop-blur-sm border border-base-300/50 hover:${currentColors.accent} transition-all duration-200 cursor-pointer group`}
+                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                      currentTheme === 'forest' 
+                                        ? 'bg-black/10 border border-black/20 hover:bg-black/20' 
+                                        : `${currentColors.secondary} backdrop-blur-sm border border-base-300/50 hover:${currentColors.accent}`
+                                    } transition-all duration-200 cursor-pointer group`}
                                   >
-                                    <span className="text-primary/80 group-hover:text-primary">
+                                    <span className={`${
+                                      currentTheme === 'forest' 
+                                        ? 'text-black/80' 
+                                        : 'text-primary/80 group-hover:text-primary'
+                                    }`}>
                                       #{highlightText(tag, searchQuery)}
                                     </span>
                                   </div>
                                 ))}
                               </div>
                             </div>
-                            <span className="text-xs text-base-content/50">© {note.createdAt.toLocaleDateString()}</span>
+                            <span className={`text-xs ${currentTheme === 'forest' ? 'text-black/50' : 'text-base-content/50'}`}>© {note.createdAt.toLocaleDateString()}</span>
                           </div>
                         </div>
                       </div>
