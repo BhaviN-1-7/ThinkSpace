@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../lib/axios';
 import toast from 'react-hot-toast';
 import { 
   ArrowLeft, 
@@ -29,7 +29,7 @@ const NoteDetailPage = () => {
     const fetchNote = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`http://localhost:5001/api/notes/${id}`);
+        const response = await api.get(`/notes/${id}`);
         setNote({
           ...response.data,
           createdAt: new Date(response.data.createdAt)
@@ -48,7 +48,7 @@ const NoteDetailPage = () => {
 
   const handlePinToggle = async () => {
     try {
-      const response = await axios.put(`http://localhost:5001/api/notes/${id}`, {
+      const response = await api.put(`/notes/${id}`, {
         isPinned: !note.isPinned
       });
       setNote({ ...response.data, createdAt: new Date(response.data.createdAt) });
@@ -61,7 +61,7 @@ const NoteDetailPage = () => {
 
   const handleArchive = async () => {
     try {
-      const response = await axios.put(`http://localhost:5001/api/notes/${id}`, { 
+      const response = await api.put(`/notes/${id}`, { 
         isArchived: !note.isArchived 
       });
       setNote({ ...response.data, createdAt: new Date(response.data.createdAt) });
@@ -82,7 +82,7 @@ const NoteDetailPage = () => {
     }
 
     try {
-      const response = await axios.put(`http://localhost:5001/api/notes/${id}`, note);
+      const response = await api.put(`/notes/${id}`, note);
       setNote({ ...response.data, createdAt: new Date(response.data.createdAt) });
       toast.success('Note updated successfully!');
       setIsEditing(false);
@@ -94,7 +94,7 @@ const NoteDetailPage = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:5001/api/notes/${id}`);
+      await api.delete(`/notes/${id}`);
       toast.success('Note deleted successfully!');
       navigate('/');
     } catch (error) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../lib/axios';
 import { 
   BookOpen, 
   Plus, 
@@ -60,7 +60,7 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
     const fetchNotes = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get('http://localhost:5001/api/notes');
+        const response = await api.get('/notes');
         const fetchedNotes = response.data.map(note => ({
           ...note,
           createdAt: new Date(note.createdAt)
@@ -156,7 +156,7 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
 
   const handlePinToggle = async (noteId, isPinned) => {
     try {
-      const response = await axios.put(`http://localhost:5001/api/notes/${noteId}`, { isPinned });
+      const response = await api.put(`/notes/${noteId}`, { isPinned });
       setNotes(notes.map(note => 
         note._id === noteId ? { ...response.data, createdAt: new Date(response.data.createdAt) } : note
       ));
@@ -169,7 +169,7 @@ const HomePage = ({ onThemeChange, currentTheme }) => {
 
   const handleArchive = async (noteId, newIsArchived) => {
     try {
-      const response = await axios.put(`http://localhost:5001/api/notes/${noteId}`, { isArchived: newIsArchived });
+      const response = await api.put(`/notes/${noteId}`, { isArchived: newIsArchived });
       setNotes(notes.map(note => 
         note._id === noteId ? { ...response.data, createdAt: new Date(response.data.createdAt) } : note
       ));

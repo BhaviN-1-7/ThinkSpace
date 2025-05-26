@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../lib/axios';
 import toast from 'react-hot-toast';
 import { 
   ArrowLeft, 
@@ -51,7 +51,7 @@ const CreatePage = () => {
 
     try {
       setIsSubmitting(true);
-      const response = await axios.post('http://localhost:5001/api/notes', {
+      const response = await api.post('/notes', {
         title: note.title,
         content: note.content,
         tags: note.tags,
