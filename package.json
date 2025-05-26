@@ -1,25 +1,16 @@
 {
-  "dependencies": {
-    "axios": "^1.9.0"
-  },
+  
   "name": "thinkspace",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "build":"npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
     "start": "npm run start --prefix backend"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/BhaviN-1-7/ThinkSpace.git"
-  },
+  
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/BhaviN-1-7/ThinkSpace/issues"
-  },
-  "homepage": "https://github.com/BhaviN-1-7/ThinkSpace#readme",
+  
   "description": ""
 }
